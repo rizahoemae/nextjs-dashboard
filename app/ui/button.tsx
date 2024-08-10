@@ -1,5 +1,7 @@
 import clsx from 'clsx';
 
+//ini kalo di vue bisa pake props $attrs buat ngeretrieve smua props jadi attribute elementnya
+//implementasinya v-bind="$attrs"
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
