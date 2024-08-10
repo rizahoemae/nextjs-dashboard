@@ -4,23 +4,31 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { generatePagination } from '@/app/lib/utils';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 export default function Pagination({ totalPages }: { totalPages: number }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const createPageURL = (pageNumber: number | string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', pageNumber.toString());
+    return `${pathname}?${params.toString()}`;
+  };
   // NOTE: Uncomment this code in Chapter 11
 
-  // const allPages = generatePagination(currentPage, totalPages);
+  const allPages = generatePagination(currentPage, totalPages);
 
   return (
     <>
       {/*  NOTE: Uncomment this code in Chapter 11 */}
 
-      {/* <div className="inline-flex">
+      <div className="inline-flex">
         <PaginationArrow
           direction="left"
           href={createPageURL(currentPage - 1)}
           isDisabled={currentPage <= 1}
         />
-
         <div className="flex -space-x-px">
           {allPages.map((page, index) => {
             let position: 'first' | 'last' | 'single' | 'middle' | undefined;
@@ -47,7 +55,7 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
           href={createPageURL(currentPage + 1)}
           isDisabled={currentPage >= totalPages}
         />
-      </div> */}
+      </div>
     </>
   );
 }
@@ -90,6 +98,7 @@ function PaginationArrow({
 }: {
   href: string;
   direction: 'left' | 'right';
+  //knp dikasih ? krn opsional
   isDisabled?: boolean;
 }) {
   const className = clsx(
@@ -109,6 +118,13 @@ function PaginationArrow({
       <ArrowRightIcon className="w-4" />
     );
 
+    // if disabled, bikin div. else, bikin link. 
+    // ini bagus sih, jadi ketika button disabled, gabisa dibypass lewat inspect element
+    // kasih notes dlu za. eh, kok kamu baca ini?
+    // cerita dikit, gw pernah implement disabled button lewat bool aja, jd kalo user pinter
+    // bakal bisa dibypass lewat inspect element akwoakwao soalnya gak gw kasih double validation di funct or smth
+    // TIL sih 
+    
   return isDisabled ? (
     <div className={className}>{icon}</div>
   ) : (
